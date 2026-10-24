@@ -173,7 +173,7 @@ const cursor = parseCompact(starts[0])
 const finalDate = parseCompact(starts.at(-1))
 const dtstamp = field(events[0], 'DTSTAMP')
 const generated = []
-const counts = { special: 0, shiftedSpecial: 0, bigNaga: 0, smallNaga: 0, prayerFlag: 0 }
+const counts = { special: 0, shiftedSpecial: 0, bigNaga: 0, smallNaga: 0, prayerFlag: 0, shiftedPrayerFlag: 0 }
 
 while (cursor <= finalDate) {
   const parts = tibetanParts(cursor)
@@ -201,18 +201,31 @@ while (cursor <= finalDate) {
         ? Array.from({ length: Math.max(0, nextParts[4] - day - 1) }, (_, index) => day + index + 1)
         : Array.from({ length: Math.max(0, 30 - day) }, (_, index) => day + index + 1)
       for (const missingDay of missingDays) {
-        if (!specialDays.has(missingDay)) continue
-        const special = specialDays.get(missingDay)
-        generated.push(generatedEvent({
-          date: cursor,
-          descriptionPrefix: `${prefix}缺日提前：`,
-          dtstamp,
-          kind: `special-${special.kind}-shifted`,
-          summary: special.summary,
-          day: missingDay,
-        }))
-        counts.special += 1
-        counts.shiftedSpecial += 1
+        if (specialDays.has(missingDay)) {
+          const special = specialDays.get(missingDay)
+          generated.push(generatedEvent({
+            date: cursor,
+            descriptionPrefix: `${prefix}缺日提前：`,
+            dtstamp,
+            kind: `special-${special.kind}-shifted`,
+            summary: special.summary,
+            day: missingDay,
+          }))
+          counts.special += 1
+          counts.shiftedSpecial += 1
+        }
+        if (isPrayerFlagDay(month, missingDay)) {
+          generated.push(generatedEvent({
+            date: cursor,
+            descriptionPrefix: `${prefix}缺日提前：`,
+            dtstamp,
+            kind: 'prayer-flag-shifted',
+            summary: '飞幡日（不宜悬挂经幡）',
+            day: missingDay,
+          }))
+          counts.prayerFlag += 1
+          counts.shiftedPrayerFlag += 1
+        }
       }
     }
 
@@ -227,7 +240,7 @@ while (cursor <= finalDate) {
       generated.push(generatedEvent({ date: cursor, descriptionPrefix: prefix, dtstamp, kind: 'small-naga', summary: '小出龙日', day }))
       counts.smallNaga += 1
     }
-    if (isPrayerFlagDay(month, day)) {
+    if (!sameTibetanDate(previousParts, parts) && isPrayerFlagDay(month, day)) {
       generated.push(generatedEvent({ date: cursor, descriptionPrefix: prefix, dtstamp, kind: 'prayer-flag', summary: '飞幡日（不宜悬挂经幡）', day }))
       counts.prayerFlag += 1
     }
