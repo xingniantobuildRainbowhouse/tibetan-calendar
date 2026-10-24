@@ -1,0 +1,11 @@
+{
+  "name": "tibetan-calendar-data",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "add-protector-days": "node add-protector-days.mjs"
+  },
+  "dependencies": {
+    "@hnw/date-tibetan": "1.0.2"
+  }
+}
