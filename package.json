@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "add-protector-days": "node add-protector-days.mjs"
+    "add-observances": "node add-calendar-observances.mjs"
   },
   "dependencies": {
     "@hnw/date-tibetan": "1.0.2"
