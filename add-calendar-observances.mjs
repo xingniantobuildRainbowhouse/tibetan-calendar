@@ -41,6 +41,36 @@ const dudjomNagaDays = new Map([
   ['20261213', 'small-naga'], ['20261218', 'big-naga'], ['20261220', 'small-naga'], ['20261223', 'small-naga'],
 ])
 
+// Re-audited cell-by-cell against the published 2025 and 2026 Dudjom Dharma
+// House Taipei calendars. These civil-date ledgers replace the earlier manual
+// transcription completely for the verified years.
+const verifiedDudjomNagaLedger = {
+  2025: {
+    1: { b: [8, 31], s: [3, 10, 12, 28] }, 2: { b: [13, 14], s: [1, 4, 7] }, 3: { b: [24], s: [] },
+    4: { b: [], s: [4, 5, 6, 7, 8, 9, 10, 21] }, 5: { b: [31], s: [2, 6, 11, 17, 19, 20, 22, 25, 27] },
+    6: { b: [], s: [5, 10, 12, 16, 21, 24, 25, 26, 29] }, 7: { b: [4, 14], s: [3, 7, 8, 10, 11, 12, 15, 18, 20, 22] },
+    8: { b: [9, 22, 23, 24], s: [1, 11, 12, 16, 18, 20, 21, 28] }, 9: { b: [3, 13, 20, 30], s: [6, 8, 23, 24, 25, 26, 27, 28, 29] },
+    10: { b: [4, 7, 20, 21, 28], s: [3, 5, 8, 11, 13, 14, 16, 18, 19, 22, 29] }, 11: { b: [7], s: [1, 2, 4, 5, 10, 16] },
+    12: { b: [28], s: [23, 30] },
+  },
+  2026: {
+    1: { b: [20], s: [2, 17, 21, 25, 28] }, 2: { b: [2, 3], s: [17] }, 3: { b: [13], s: [25, 26, 27, 28, 29, 30, 31] },
+    4: { b: [], s: [10, 15, 25, 30] }, 5: { b: [21], s: [6, 8, 10, 12, 15, 16, 25, 27, 30] },
+    6: { b: [10, 23], s: [1, 5, 11, 14, 15, 17, 18, 22, 26, 28, 29, 30] }, 7: { b: [4, 29], s: [1, 3, 5, 8, 10, 11, 22, 31] },
+    8: { b: [11, 12, 13, 23], s: [1, 4, 6, 9, 10, 17, 25, 30] }, 9: { b: [2, 4, 10, 19, 23, 26], s: [13, 14, 15, 16, 17, 18, 22, 24, 27, 28] },
+    10: { b: [9, 10, 17], s: [1, 3, 4, 5, 7, 8, 11, 18, 22, 23, 25, 26, 31] }, 11: { b: [], s: [6] },
+    12: { b: [18], s: [13, 20, 23] },
+  },
+}
+
+dudjomNagaDays.clear()
+for (const [year, months] of Object.entries(verifiedDudjomNagaLedger)) {
+  for (const [month, days] of Object.entries(months)) {
+    for (const day of days.b) dudjomNagaDays.set(`${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`, 'big-naga')
+    for (const day of days.s) dudjomNagaDays.set(`${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`, 'small-naga')
+  }
+}
+
 const bigNagaDays = new Set(['1:25', '6:29', '8:29', '9:17'])
 const smallNagaDays = new Set([
   '2:7', '2:8', '2:9', '2:10', '2:11', '2:12', '2:13', '2:23', '2:28',
